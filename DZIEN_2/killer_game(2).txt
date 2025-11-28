@@ -1,0 +1,57 @@
+System:
+Jesteś kreatywnym inżynierem oprogramowania specjalizującym się w generowaniu interaktywnych map narracyjnych do gier fabularnych. Kod tworzysz w czystym Pythonie (PEP8), z dokładnymi docstringami w stylu Sphinx. Preferujesz przejrzyste API, deterministyczne wyniki (możliwość ustawienia ziarna losowości) i praktyczne przykłady użycia. Używasz bibliotek standardowych oraz networkx do reprezentacji grafu/decyzyjnego drzewa.
+
+User:
+Zaimplementuj moduł Pythona zawierający klasę `NarrativeMap`, która spełnia poniższe wymagania.
+
+# Wymagania funkcjonalne
+1) Inicjalizacja:
+   - `__init__(self, themes: list[str], locations: list[str], characters: list[str], seed: int | None = 42)`
+   - Przechowuj dane wejściowe oraz twórz pusty graf `networkx.DiGraph`.
+2) Budowa drzewa:
+   - Metoda `build_tree(self, depth: int = 3)` tworzy drzewo decyzyjne (ukorzenione w węźle "start") o zadanej głębokości.
+   - Każdy węzeł reprezentuje zdarzenie opisane 2–3 zdaniami.
+   - Każda krawędź ma etykietę wyboru (np. "zaufaj" vs "zdrada") i atrybuty `risk` i `reward` w skali 1–10.
+   - Wartości `risk` i `reward` kumulują się po ścieżce (przez sumowanie).
+3) Generacja opisów:
+   - Opisy zdarzeń generuj przez wewnętrzną metodę `self._generate_event_description(node_id: str) -> str`.
+   - W tej metodzie zasymuluj wywołanie LLM i zostaw komentarz `# TODO: call GPT here`.
+   - Opisy powinny sensownie korzystać z `themes`, `locations`, `characters` (np. losowe lub deterministyczne łączenie).
+4) Etykiety decyzji:
+   - Dla każdego węzła niekońcowego wygeneruj przynajmniej 2 gałęzie z kontrastowymi etykietami (np. "zaufaj"/"zdrada", "ucieknij"/"staw czoła").
+5) Podsumowanie ścieżki:
+   - Metoda `get_path_summary(self, path: list[str]) -> dict` przyjmuje listę identyfikatorów węzłów od korzenia do liścia.
+   - Zwraca słownik zawierający:
+     - `events`: listę opisów zdarzeń,
+     - `choices`: listę etykiet decyzji między kolejnymi węzłami,
+     - `total_risk`: sumaryczne ryzyko,
+     - `total_reward`: sumaryczną nagrodę,
+     - `n_steps`: liczbę kroków.
+6) Przykład użycia:
+   - W sekcji `if __name__ == "__main__":` pokaż:
+     - Utworzenie mapy dla:
+       `themes=["odkupienie","tajemnica"]`,
+       `locations=["opuszczony zamek","mglista dolina"]`,
+       `characters=["Wędrowiec","Cień"]`
+     - Zbudowanie drzewa o głębokości 3,
+     - Pobranie i wypisanie podsumowania dla jednej z wygenerowanych ścieżek (np. najdalej idącej lewą gałęzią),
+     - Krótką demonstrację atrybutów w grafie (np. wydruk krawędzi z `choice`, `risk`, `reward`).
+
+# Wymagania niefunkcjonalne
+- Użyj `networkx` (DiGraph) do przechowywania struktury.
+- Zadbaj o deterministyczność przez `random.Random(self.seed)`.
+- Każda publiczna metoda i klasa MUSI mieć docstring w stylu Sphinx (parametry, typy, zwracane wartości, przykłady).
+- Czytelne nazwy identyfikatorów węzłów (np. "n0", "n0_L", "n0_RL" itd.).
+- Zero I/O plikowego; wyłącznie wypisy do stdout w przykładzie.
+- Kod gotowy do uruchomienia bez dodatkowej konfiguracji (poza `pip install networkx`).
+
+# Format wyjścia
+Zwróć WYŁĄCZNIE kompletny kod modułu Pythona w jednym bloku kodu (```python ... ```), bez komentarzy poza kodem i bez dodatkowej narracji.
+
+# Kontrola jakości (checklist wewnętrzny)
+- [ ] Importy i zależności minimalne (`typing`, `random`, `networkx`).
+- [ ] `NarrativeMap.__init__`, `build_tree`, `_generate_event_description`, `get_path_summary`.
+- [ ] Krawędzie mają: `choice`, `risk`, `reward`.
+- [ ] Determinizm przez `random.Random`.
+- [ ] Docstringi Sphinx dla klasy i metod.
+- [ ] Sekcja `__main__` prezentuje działający przykład z danymi podanymi wyżej.
