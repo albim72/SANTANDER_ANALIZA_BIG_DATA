@@ -1,0 +1,1 @@
+gz = tf.keras.utils.get_file('HIGGS.csv.gz','https://archive.ics.uci.edu/ml/machine-learning-databases/00280/HIGGS.csv.gz')
